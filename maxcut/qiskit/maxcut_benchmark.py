@@ -193,8 +193,9 @@ saved_result = None
 instance_filename = None
 
 # Execute program with default parameters
-def run (min_qubits=3, max_qubits=6, max_circuits=3, num_shots=100,
-        method=1, rounds=1,
+def run (min_qubits=3, max_qubits=6, max_circuits=3, num_shots=100, method=1,
+        rounds=1, max_iter=15, score_metric='fidelity', x_metric='exec_time', y_metric='num_qubits',
+        fixed_metrics={}, num_x_bins=20, y_size=None, x_size=None,
         backend_id='qasm_simulator', provider_backend=None,
         hub="ibm-q", group="open", project="main", exec_options=None):
         
@@ -228,8 +229,11 @@ def run (min_qubits=3, max_qubits=6, max_circuits=3, num_shots=100,
         nodes, edges = common.read_maxcut_instance(instance_filename)
         opt, _ = common.read_maxcut_solution(instance_filename)
         
-        f = -1 * compute_objective(result, nodes, edges) / opt
-        metrics.store_metric(num_qubits, s_int, 'fidelity', f)
+        counts, fidelity = analyze_and_print_result(qc, result, num_qubits, int(s_int), num_shots)
+        metrics.store_metric(num_qubits, s_int, 'fidelity', fidelity)
+        
+        a_r = -1 * compute_objective(result, nodes, edges) / opt
+        metrics.store_metric(num_qubits, s_int, 'approx_ratio', a_r)
         
         saved_result = result
      
@@ -301,9 +305,11 @@ def run (min_qubits=3, max_qubits=6, max_circuits=3, num_shots=100,
                       
                 # a unique circuit index used inside the inner minimizer loop as identifier         
                 unique_circuit_index = 0 
+                start_iters_t = time.time()
                 
                 p_depth = 2
                 thetas_init = 2*p_depth*[1.0]
+                
             
                 def expectation(theta):
                     global unique_circuit_index
@@ -333,7 +339,7 @@ def run (min_qubits=3, max_qubits=6, max_circuits=3, num_shots=100,
                 
                     return compute_objective(saved_result, nodes, edges)
             
-                res = minimize(expectation, thetas_init, method='COBYLA', options = { 'maxiter': 6} )
+                res = minimize(expectation, thetas_init, method='COBYLA', options = { 'maxiter': max_iter} )
                 opt, sol = common.read_maxcut_solution(instance_filename)
             
                 num_qubits = int(num_qubits)
@@ -345,7 +351,7 @@ def run (min_qubits=3, max_qubits=6, max_circuits=3, num_shots=100,
                 metrics.store_metric(num_qubits, s_int, 'rounds', p_depth)
                 '''
                 #print(res)
-            
+                
         # for method 2, need to aggregate the detail metrics appropriately for each group
         # Note that this assumes that all iterations of the circuit have completed by this point
         if method == 2:                  
@@ -357,17 +363,21 @@ def run (min_qubits=3, max_qubits=6, max_circuits=3, num_shots=100,
         
     # Wait for all active circuits to complete; report metrics when groups complete
     ex.finalize_execution(metrics.finalize_group)
-
-    if method == 2:
-        metrics.print_all_circuit_metrics()
              
     # print a sample circuit
     print("Sample Circuit:"); print(QC_ if QC_ != None else "  ... too large!")
     #if method == 1: print("\nQuantum Oracle 'Uf' ="); print(Uf_ if Uf_ != None else " ... too large!")
-
+    
+    
     # Plot metrics for all circuit sizes
-    metrics.plot_metrics(f"Benchmark Results - MaxCut ({method}) - Qiskit")
+    if method == 1:
+        metrics.plot_metrics(f"Benchmark Results - MaxCut ({method}) - Qiskit")
+    elif method == 2:
+        #metrics.print_all_circuit_metrics()
+        metrics.plot_all_area_metrics(f"Benchmark Results - MaxCut ({method}) - Qiskit", score_metric=score_metric,
+                                  x_metric=x_metric, y_metric=y_metric, fixed_metrics=fixed_metrics,
+                                  num_x_bins=num_x_bins, x_size=x_size, y_size=y_size)
 
 # if main, execute method
-if __name__ == '__main__': run()
+if __name__ == '__main__': run(min_qubits=4, max_qubits=6, method=2)
    

@@ -1,0 +1,223 @@
+
+Application-Oriented Benchmarks Project - TASKS
+===============================================
+
+
+General
+=======
+
+*** Performance has degraded on IBM Guadalupe  and IonQ QPU since paper published
+    Executing same code as before.
+    Approaches:  
+        1) try to reason from code whether something is incorrect
+        2) execute standalone programs and compare mesaurements obtained
+        3) For IonQ, execute same QFT or PE examples on Braket and compare results
+
+**  Provide better mechanism for setting global variables 
+    There is a problem with setting them in jupyter notebook, they reset on every benchmark 
+
+**  More flexibility in controlling sweep params for larger # qubits 
+    Add “skip” parameter for example 
+
+
+*   Add way to avoid hanging notebooks. This has caused issues in the past when user started 
+    the circuits but then had the run get interrupted by other customers. 
+
+*   More detailed save information. The current saving format is great only for summary statistics.
+    It would also be nice to save more information, like the full list of output counts and fidelity and gate counts per random circuit iteration. 
+
+*   Change the saving method to not overwrite previous test results.
+    Right now if you run a test with n=1,2,3 qubits and then run the same test but with n=4,5,6 qubits the second run seems to overwrite the data from the first run even though the qubit numbers are different. 
+
+
+User Interface
+--------------
+
+**  Develop improved user interface - GUI for user access 
+    Ideally a wep page (built simply, e.g. with bootstrap) and a simple python server 
+    User could select all parameters from dialog boxes and execute from browser
+
+ 
+Circuit Depth 
+-------------
+
+*** Reduce over head of transpilation time for calculating normalized depth 
+    Cache the calculated data until circuit definition modified 
+    *** found that this may not be as big an issue as thought
+
+
+Fidelity Calculation
+--------------------
+
+**  Is there a way to improve on polarization fidelity
+    Depending on the input value, the thermal distribution is too simple a comparison (see Sonika's formula)
+    You can get negative number, which we then floor to 0
+
+
+Algorithmic qubits
+------------------
+
+*** Integrate Algorithmic Qubits
+    Work currently under way
+    
+
+API-Specific Issues
+===================
+
+Qiskit
+------
+
+**  Look into use of Qiskit Runtime
+    Determine how best to use ... all benchmarks or just the iterative ones?
+    
+    
+    
+Cirq
+----
+
+*** Cannot run benchmarks via Cirq on hardware.
+    Hardware requires a device type that identifies the topoogy
+    Develop simple conversion of circuits in the execute module
+    Validate on IonQ and AQT
+    
+**  Look at recent improvements in Cirq that might improve the implementatins
+    E.g. subcircuits, 
+
+     
+Braket
+------
+
+**  Look at recent improvements in Cirq that might improve the implementatins
+    E.g. subcircuits, 
+    
+**  Look into equivalent to Qiskit Runtime
+    Determine how best to use ... all benchmarks or just the iterative ones?
+
+
+
+Q#
+--
+
+*** Look at fundamental design of benchmarks
+
+
+
+Benchmark Programs
+==================
+
+
+Bernstein-Vazirani
+------------------
+
+    
+  
+Deutsch-Jozsa
+-------------
+
+    
+  
+Hidden Shift
+------------
+
+    
+
+Quantum Fourier Transform
+-------------------------
+
+
+
+Amplitude Estimation
+--------------------
+
+*   The computation of app_counts is different from what it is in PE    
+    In PE, the distributions are mapped one-to-one from bits to theat values
+    In AE, 01 and 10 are aggregated into 0.5 and shows a distribution of 0.5, instead of .25 for each
+    Why?
+
+
+HHL Linear Solver
+-----------------
+
+*** Complete and merge the current version that scales up to 6 qubits
+    Needs README
+    
+**  Finish Karl's implementation that scales to larger numbers
+
+
+
+Iterative Application Benchmarks
+================================
+
+MaxCut
+------
+
+*** Finalize the current code branch and merge to master
+    Need to resolve conflicts with AQ version of metrics.py
+    
+*** Plots need some cleanup
+
+*** Find way to show classical exec times to left of y-axis
+
+
+
+VQE
+---
+
+**  Implement the iterative version of this like MaxCut
+
+
+ML - Nearest centroid
+---------------------
+
+**  Implement the iterative version of this like MaxCut
+
+
+
+Program Optimization Tools
+==========================
+
+Qiskit
+------
+
+*** The Qiskit Pass Mgr code no longer works
+    Something changed about Qiskit, code will need updating
+    Also need to verify if this works to improve performance or not.
+    
+
+*** Verfiy TKET implementation and document in README this exec_option feature
+
+  
+
+Benchmark Variations
+====================
+  
+
+Quantum Volume
+--------------
+
+
+  
+
+Container Implementation
+------------------------
+
+
+    
+  
+Major Structure Changes
+=======================
+
+*   Restructure all benchmarks as classes with run/analyze/etc methods
+    Big question: should be create a looping framework and invoke instance methods
+    Or will this cause too much code to be hidden from users?
+    Currently, prefeence is making all BMs self-contained
+    This is a much larger change but would be useful for expert users that want to dig in to more of the details. 
+
+  
+    
+Issues
+======
+
+
+  
+  

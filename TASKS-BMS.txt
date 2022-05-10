@@ -58,7 +58,11 @@ Algorithmic qubits
 ------------------
 
 *** Integrate Algorithmic Qubits
-    Work currently under way
+    Steps:
+    - merge maxcut metrics.py changes to master and to AQ branch
+    - merge most of AQ metrics changes to master and back to maxcut -> verify
+    - add code to store multiple metrics (polarization and hellinger)
+    - use second metric in the AQ plots
     
 
 API-Specific Issues
@@ -142,6 +146,7 @@ HHL Linear Solver
     Needs README
     
 **  Finish Karl's implementation that scales to larger numbers
+    Currently missing a calculation of the inverse rotation angle
 
 
 
@@ -152,14 +157,44 @@ MaxCut
 ------
 
 *** Finalize the current code branch and merge to master
-    Need to resolve conflicts with AQ version of metrics.py
+    Need to resolve conflicts with AQ version of metrics.py (see task in AQ benchmarks)
     
 *** Plots need some cleanup
+    - y-axis showing decimal points
+    - x-axis rounding oddly
+    - use logarithmic x-axis for time as an option
 
 *** Find way to show classical exec times to left of y-axis
 
+**  Instead of Approx Ratio, use Optimality Gap as in Carleton's plots
+    What are the difference between these two?
+    
+**   With width, the number of iterations grows in classical optimization code.
+    Find way to end the minimizer early after quality isn’t improving.
+    (sooner than minimizer might terminate on its own)
+    
+**   Terminate classical optimization after some time limit.
+    We need a max time to execute and terminate if running too long
 
+**  Implement the ammealing version using D-Wave Ocean
+    - Create _common/ocean/execute.py to handle execution
+    - figure out how to control annealing time, and use like shots
+      Need to change annealing times by doubling each time and executing to get intermediate results. Annealing time can range from 0.5 to 2000 us.
+      Or, vary the shot count to obtain fewer samples to reduce time of execution
+    - keep embedding time as a metric included in the total time to make comparison with gate model fair.
+      Can we share code with MaxCut?   (See 220202 NOTES for reference)
+      
+*   Look at ways to add variance to the results analysis
+     
+      
 
+MaxIndSet
+---------
+
+**  Implement a second optimization benchmark, for Max Independent Set
+    
+
+    
 VQE
 ---
 
@@ -169,8 +204,12 @@ VQE
 ML - Nearest centroid
 ---------------------
 
+*** Validate and merge the neareset centroid benchmark to master
+    - but, what is its name
+    - it needs a README
+    
 **  Implement the iterative version of this like MaxCut
-
+    - enhance the README 
 
 
 Program Optimization Tools

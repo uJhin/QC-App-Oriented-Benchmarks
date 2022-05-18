@@ -18,7 +18,11 @@ General
 
 **  More flexibility in controlling sweep params for larger # qubits 
     Add “skip” parameter for example 
+    Control qubits counts better than we do.
+	We don’t always want to sweep from min to max qubits, want better control
 
+**  Add summary table view, similar to Santanu example provided 
+    
 
 *   Add way to avoid hanging notebooks. This has caused issues in the past when user started 
     the circuits but then had the run get interrupted by other customers. 
@@ -28,6 +32,10 @@ General
 
 *   Change the saving method to not overwrite previous test results.
     Right now if you run a test with n=1,2,3 qubits and then run the same test but with n=4,5,6 qubits the second run seems to overwrite the data from the first run even though the qubit numbers are different. 
+
+*   Add mechanism to store and access output counts from entire run
+	Would need to store circuit_metrics as well as detailed counts for advanced users
+    We'd need to make this an option as data volume could be large
 
 
 User Interface
@@ -73,7 +81,9 @@ Qiskit
 
 **  Look into use of Qiskit Runtime
     Determine how best to use ... all benchmarks or just the iterative ones?
-    
+
+**  Implement ability to submit a batch of circuits
+    Make use of this to create N benchmark circuits (unparameterized) and submit in one job
     
     
 Cirq

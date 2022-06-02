@@ -12,9 +12,11 @@ General
         1) try to reason from code whether something is incorrect
         2) execute standalone programs and compare mesaurements obtained
         3) For IonQ, execute same QFT or PE examples on Braket and compare results
+    ++ IonQ agreed that fidelity degraded and has fixed the issue; need to retest on Guadalupe
 
 **  Provide better mechanism for setting global variables 
-    There is a problem with setting them in jupyter notebook, they reset on every benchmark 
+    There is a problem with setting them in jupyter notebook, they reset on every benchmark
+    This could be a keyword based object passed to run method, like 'exec_options', but 'run_options'
 
 **  More flexibility in controlling sweep params for larger # qubits 
     Add “skip” parameter for example 
@@ -22,7 +24,9 @@ General
 	We don’t always want to sweep from min to max qubits, want better control
 
 **  Add summary table view, similar to Santanu example provided 
-    
+    Also add two new plots suggested by TAC:
+    - fidelity vs circuit depth OR number 2Q gates
+    - execution time vs circuit depth OR number 2Q gates
 
 *   Add way to avoid hanging notebooks. This has caused issues in the past when user started 
     the circuits but then had the run get interrupted by other customers. 
